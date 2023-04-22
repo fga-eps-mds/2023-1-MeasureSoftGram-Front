@@ -1,22 +1,6 @@
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
 import LatestValueTable from '../LatestValueTable';
-
-let container: any = null;
-
-beforeEach(() => {
-  // configurando um elemento do DOM como o alvo do render
-  container = document.createElement('div');
-  document.body.appendChild(container);
-});
-
-afterEach(() => {
-  // limpa o elemento do DOM
-  unmountComponentAtNode(container);
-  container.remove();
-  container = null;
-});
 
 describe('LatestValueTable', () => {
   it('renders with latestValue', () => {
@@ -39,14 +23,7 @@ describe('LatestValueTable', () => {
         }
       ]
     };
-
-    act(() => {
-      render(<LatestValueTable title={title} latestValue={latestValue} />, container);
-    });
-
-    const received = container.textContent;
-    const expected = 'Título da tabelaÚltimo valorÚltima atualizaçãoitem 112301/12/2022 09:12item 245602/12/2022 09:12';
-
-    expect(received).toContain(expected);
+    const { container } = render(<LatestValueTable title={title} latestValue={latestValue} />);
+    expect(container).toMatchSnapshot();
   });
 });
