@@ -142,7 +142,7 @@ function FilterTreeInfos({
     isArrayEmpty(filterCharacteristics.options) ||
     isArrayEmpty(filterSubCharacteristics.options) ||
     isArrayEmpty(filterMeasures.options) ||
-    isArrayEmpty(filterMetrics.options) ||
+    // isArrayEmpty(filterMetrics.options) ||
     isArrayEmpty(Object.values(checkedOptions))
   ) {
     return <Skeleton />;
