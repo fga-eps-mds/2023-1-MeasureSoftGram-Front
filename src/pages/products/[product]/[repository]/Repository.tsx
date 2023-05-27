@@ -5,6 +5,7 @@ import { useRepositoryContext } from '@contexts/RepositoryProvider';
 import getLayout from '@components/Layout';
 import GraphicStackedLine from '@components/GraphicStackedLine';
 import useRequireAuth from '@hooks/useRequireAuth';
+import { Resizable } from 're-resizable';
 import Skeleton from './components/Skeleton';
 import HistoricalLatestInfos from './components/HistoricalInfosList';
 import LatestValueTable from './components/LatestValueTable';
@@ -35,6 +36,7 @@ const Repository: NextPageWithLayout = () => {
   }, [checkedOptionsFormat]);
 
   const isArrayEmpty = (array: Array<any>) => array.length === 0;
+  const [widthRepo, setWidthRepo] = React.useState(0);
 
   if (
     isArrayEmpty(repositoryHistoricalCharacteristics) ||
@@ -47,7 +49,7 @@ const Repository: NextPageWithLayout = () => {
   }
 
   return (
-    <Box display="flex" width="100%" flexDirection="row">
+    <Box display="flex" flexDirection="row" width="fitContent">
       <FilterTreeInfos
         checkedOptions={checkedOptions}
         setCheckedOptions={setCheckedOptions}
@@ -56,57 +58,77 @@ const Repository: NextPageWithLayout = () => {
         measures={measures}
         metrics={metrics}
       />
-      <Box width="100%">
-        <Box marginBottom="42px">
-          <Container>
-            <Box display="flex" flexDirection="column" width="100%">
-              <Box marginTop="40px" marginBottom="36px">
-                <Box display="flex">
-                  <Typography variant="h4" marginRight="10px">
-                    Repositório
-                  </Typography>
-                  <Typography variant="h4" fontWeight="300">
-                    {currentRepository.name}
-                  </Typography>
+      <Box
+        display="flex"
+        sx={{
+          justifyContent: 'center',
+          width: '70vw',
+          height: '80vh'
+        }}
+      >
+        <Resizable
+          boundsByDirection
+          minWidth={750}
+          maxWidth="100%"
+          enable={{
+            top: false,
+            right: false,
+            bottom: false,
+            left: true,
+            topRight: false,
+            bottomRight: false,
+            bottomLeft: false,
+            topLeft: false
+          }}
+          style={{ position: 'relative', right: '0', borderLeft: '1px solid #e0e0e0' }}
+          defaultSize={{ width: '70vw', height: 'auto' }}
+          onResizeStop={(e, direction, ref, d) => {
+            setWidthRepo(widthRepo + d.width);
+          }}
+        >
+          <Box width="100%">
+            <Box marginBottom="42px">
+              <Container>
+                <Box display="flex" flexDirection="column" width="100%">
+                  <Box marginTop="40px" marginBottom="36px">
+                    <Box display="flex">
+                      <Typography variant="h4" marginRight="10px">
+                        Repositório
+                      </Typography>
+                      <Typography variant="h4" fontWeight="300">
+                        {currentRepository.name}
+                      </Typography>
+                    </Box>
+                    <div>
+                      <Download
+                        product={currentRepository}
+                        kind="characteristics"
+                        startDate={startDate}
+                        endDate={endDate}
+                        checkedOptions={checkedOptions}
+                      />
+                    </div>
+                    <Typography variant="caption" color="gray">
+                      {currentRepository?.description}
+                    </Typography>
+                  </Box>
+                  {historicalSQC &&
+                    repositoryHistoricalCharacteristics &&
+                    repositoryHistoricalCharacteristics.length !== 0 && (
+                      <GraphicStackedLine
+                        historical={repositoryHistoricalCharacteristics.concat(historicalSQC)}
+                        checkedOptions={checkedOptions}
+                        title="Características"
+                        getDates={getGraphicDates}
+                      />
+                    )}
+                  <LatestValueTable title="Características" latestValue={latestValueCharacteristics} />
                 </Box>
-
-                <div>
-                  <Download
-                    product={currentRepository}
-                    kind="characteristics"
-                    startDate={startDate}
-                    endDate={endDate}
-                    checkedOptions={checkedOptions}
-                  />
-                </div>
-                {/* sqc, characteristics, subcharacteristics, measures, metrics */}
-
-                <Typography variant="caption" color="gray">
-                  {currentRepository?.description}
-                </Typography>
-              </Box>
-
-              {historicalSQC &&
-                repositoryHistoricalCharacteristics &&
-                repositoryHistoricalCharacteristics.length !== 0 && (
-                  <GraphicStackedLine
-                    historical={repositoryHistoricalCharacteristics.concat(historicalSQC)}
-                    checkedOptions={checkedOptions}
-                    title="Características"
-                    getDates={getGraphicDates}
-                  />
-                )}
-
-              <LatestValueTable title="Características" latestValue={latestValueCharacteristics} />
+              </Container>
             </Box>
-          </Container>
-        </Box>
-
-        {/* <SubCharacteristicsList checkedOptions={checkedOptions} /> */}
-
-        {/* <HistoricalInfosList checkedOptions={checkedOptions}/> */}
-
-        <HistoricalLatestInfos checkedOptions={checkedOptions} currentRepository={currentRepository} />
+            <HistoricalLatestInfos checkedOptions={checkedOptions} currentRepository={currentRepository} />
+          </Box>
+        </Resizable>
       </Box>
     </Box>
   );
