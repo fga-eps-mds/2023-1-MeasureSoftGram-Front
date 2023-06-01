@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import Filters from '@components/Filters';
 import Skeleton from '../Skeleton/Skeleton';
+import SearchBar from '../SearchBar/SearchBar';
 import * as Styles from './styles';
 
 interface OptionCheckedProps {
@@ -197,29 +198,34 @@ function FilterTreeInfos({
   };
 
   return (
-    <Styles.FilterBackground>
-      <Box
-        display="flex"
-        paddingX="10px"
-        flexDirection="column"
-        marginTop="0px"
-        position="fixed"
-        overflow="auto"
-        maxHeight="85vh"
-      >
-        {[filterCharacteristics, filterSubCharacteristics, filterMeasures, filterMetrics].map((filter) => (
-          <Filters
-            data-testid="reliability-checkbox"
-            key={filter.filterTitle}
-            filterTitle={filter.filterTitle}
-            options={filter.options}
-            updateOptions={handleFilter}
-            checkedOptions={checkedOptions}
-            optionsShow={filter.optionsShow}
-          />
-        ))}
-      </Box>
-    </Styles.FilterBackground>
+    <Box display="flex" flexDirection="row">
+      <Styles.FilterBackground>
+        <Box
+          display="flex"
+          paddingX="10px"
+          flexDirection="column"
+          marginTop="0px"
+          position="fixed"
+          overflow="auto"
+          maxHeight="85vh"
+        >
+          <SearchBar />
+          <Box display="flex" flexDirection="column" marginBottom="10px">
+            {[filterCharacteristics, filterSubCharacteristics, filterMeasures, filterMetrics].map((filter) => (
+              <Filters
+                data-testid="reliability-checkbox"
+                key={filter.filterTitle}
+                filterTitle={filter.filterTitle}
+                options={filter.options}
+                updateOptions={handleFilter}
+                checkedOptions={checkedOptions}
+                optionsShow={filter.optionsShow}
+              />
+            ))}
+          </Box>
+        </Box>
+      </Styles.FilterBackground>
+    </Box>
   );
 }
 

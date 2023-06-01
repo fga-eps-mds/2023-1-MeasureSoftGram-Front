@@ -36,7 +36,7 @@ const Repository: NextPageWithLayout = () => {
   }, [checkedOptionsFormat]);
 
   const isArrayEmpty = (array: Array<any>) => array.length === 0;
-  const [widthRepo, setWidthRepo] = React.useState(0);
+  const [widthRepo, setWidthRepo] = React.useState('70vw');
 
   if (
     isArrayEmpty(repositoryHistoricalCharacteristics) ||
@@ -49,7 +49,7 @@ const Repository: NextPageWithLayout = () => {
   }
 
   return (
-    <Box display="flex" flexDirection="row" width="fitContent">
+    <Box display="flex" flexDirection="row" width="fitContent" justifyContent="space-evenly">
       <FilterTreeInfos
         checkedOptions={checkedOptions}
         setCheckedOptions={setCheckedOptions}
@@ -62,14 +62,13 @@ const Repository: NextPageWithLayout = () => {
         display="flex"
         sx={{
           justifyContent: 'center',
-          width: '70vw',
+          width: widthRepo,
           height: '80vh'
         }}
       >
         <Resizable
-          boundsByDirection
           minWidth={750}
-          maxWidth="100%"
+          maxWidth="70vw"
           enable={{
             top: false,
             right: false,
@@ -80,13 +79,13 @@ const Repository: NextPageWithLayout = () => {
             bottomLeft: false,
             topLeft: false
           }}
-          style={{ position: 'relative', right: '0', borderLeft: '1px solid #e0e0e0' }}
+          style={{ alignItems: 'center', justifyContent: 'center', borderLeft: '1px solid #e0e0e0' }}
           defaultSize={{ width: '70vw', height: 'auto' }}
           onResizeStop={(e, direction, ref, d) => {
-            setWidthRepo(widthRepo + d.width);
+            setWidthRepo((document.documentElement.clientWidth * 0, 7 + d.width).toString());
           }}
         >
-          <Box width="100%">
+          <Box>
             <Box marginBottom="42px">
               <Container>
                 <Box display="flex" flexDirection="column" width="100%">
