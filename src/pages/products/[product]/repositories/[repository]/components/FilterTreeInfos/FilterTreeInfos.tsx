@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import Filters from '@components/Filters';
 import Skeleton from '../Skeleton/Skeleton';
-import SearchBar from '../SearchBar/SearchBar';
 import * as Styles from './styles';
 
 interface OptionCheckedProps {
@@ -98,7 +97,8 @@ function FilterTreeInfos({
     options: [],
     optionsShow: []
   });
-
+  const filteredOptions = [filterCharacteristics, filterSubCharacteristics, filterMeasures, filterMetrics];
+  const [query, setQuery] = useState('');
   useEffect(() => {
     if (!subCharacteristics || !measures || !metrics) {
       return;
@@ -197,6 +197,27 @@ function FilterTreeInfos({
     setCheckedOptions(filteredItem);
   };
 
+  const filterOptions = (array, query) => {
+    const getNodes = (result, object) => {
+      if (object.filterTitle.toLowerCase().startsWith(query.toLowerCase())) {
+        result.push(object);
+        return result;
+      }
+      object.optionsShow.forEach((item) => {
+        if (item.toLowerCase().startsWith(query.toLowerCase())) {
+          result.push(object);
+          return result;
+        }
+      });
+      if (Array.isArray(object.nodes)) {
+        const nodes = object.nodes.reduce(getNodes, []);
+        if (nodes.length) result.push({ ...object, nodes });
+      }
+      return result;
+    };
+    return array.reduce(getNodes, []);
+  };
+
   return (
     <Box display="flex" flexDirection="row">
       <Styles.FilterBackground>
@@ -209,17 +230,23 @@ function FilterTreeInfos({
           overflow="auto"
           maxHeight="85vh"
         >
-          <SearchBar />
+          <TextField
+            id="outlined-basic"
+            variant="outlined"
+            size="small"
+            label="Pesquisar"
+            onChange={(e) => setQuery(e.target.value)}
+          />
           <Box display="flex" flexDirection="column" marginBottom="10px">
-            {[filterCharacteristics, filterSubCharacteristics, filterMeasures, filterMetrics].map((filter) => (
+            {filterOptions(filteredOptions, query).map((option) => (
               <Filters
                 data-testid="reliability-checkbox"
-                key={filter.filterTitle}
-                filterTitle={filter.filterTitle}
-                options={filter.options}
+                key={option.filterTitle}
+                filterTitle={option.filterTitle}
+                options={option.options}
                 updateOptions={handleFilter}
                 checkedOptions={checkedOptions}
-                optionsShow={filter.optionsShow}
+                optionsShow={option.optionsShow}
               />
             ))}
           </Box>
